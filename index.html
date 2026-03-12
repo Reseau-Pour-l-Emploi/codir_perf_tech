@@ -171,14 +171,18 @@
         #done  h2 { background: #27ae60; }
         .col-sub {
             display: inline-block; margin-top: 5px;
-            background: rgba(255,255,255,0.32); color: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.95);
             font-size: 0.72em; font-weight: 500; letter-spacing: 0.2px;
             padding: 3px 9px; border-radius: 10px; text-transform: none;
+            pointer-events: none;
         }
         .col-sub .col-count {
-            background: rgba(255,255,255,0.45); color: rgba(0,0,0,0.55);
+            background: rgba(255,255,255,0.38); color: rgba(255,255,255,0.95);
             padding: 1px 6px; border-radius: 8px; font-size: 1em; margin-left: 5px;
+            pointer-events: none;
         }
+        .column h2 { pointer-events: none; }
+        .column h2 * { pointer-events: none; }
             display: inline-block; background: rgba(255,255,255,0.3);
             padding: 1px 7px; border-radius: 10px; font-size: 0.75em; margin-left: 6px;
         }
@@ -306,17 +310,17 @@
     </div>
 
     <div id="kanban">
-        <div class="column" id="todo">
+        <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h2>À traiter d'ici le prochain CODIR<br><span class="col-sub">informations à partager, rendez-vous, actions en cours <span class="col-count" id="cnt-todo">0</span></span></h2>
-            <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="task-list"></div>
         </div>
-        <div class="column" id="doing">
+        <div class="column" id="doing" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h2>Points à inscrire à l'ordre du jour du CODIR<br><span class="col-sub">sujets nécessitant présentation, discussion ou arbitrage <span class="col-count" id="cnt-doing">0</span></span></h2>
-            <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="task-list"></div>
         </div>
-        <div class="column" id="done">
+        <div class="column" id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h2>Sujets structurants / de transformation<br><span class="col-sub">enjeux stratégiques, évolutions majeures, trajectoires long terme <span class="col-count" id="cnt-done">0</span></span></h2>
-            <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="task-list"></div>
         </div>
     </div>
 
@@ -804,8 +808,9 @@ function drop(e) {
     if (!dragged) return;
     var col = e.target;
     while (col && !col.classList.contains('column')) col = col.parentElement;
-    if (!col) return;
-    var after = getDragAfterElement(col.querySelector('.task-list'), e.clientY);
+    if (!col || !col.id) return;
+    var taskList = col.querySelector('.task-list');
+    var after = getDragAfterElement(taskList, e.clientY);
     window._tasks.splice(window._tasks.indexOf(dragged), 1);
     dragged.status = col.id; dragged.lastMod = Date.now();
     if (!after) window._tasks.push(dragged);

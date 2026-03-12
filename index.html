@@ -390,7 +390,7 @@
 
 <!-- ═══ VARIABLES GLOBALES (avant tout) ═══ -->
 <script>
-    window.APP_PASSWORD    = "dirperf";
+    window.APP_PASSWORD_HASH = "37b09ae28e532f6b0a0fa3c3ef0dc2a19ba15b9e159f633c1c5ea26dea18bdd8";
     window._tasks          = [];
     window._actors         = [];
     window._fbSet          = null;
@@ -489,22 +489,25 @@ var _syncTimer        = null;
 // ── AUTH ──
 function checkPassword() {
     var input = document.getElementById("passwordInput").value;
-    if (input === window.APP_PASSWORD) {
-        sessionStorage.setItem("kanban_auth", "ok");
-        // Cacher login, afficher écran de chargement
-        document.getElementById("login-screen").style.display  = "none";
-        document.getElementById("loading-screen").style.display = "flex";
-        // Si Firebase déjà prêt, démarrer directement
-        if (window._firebaseReady && window._firstSyncDone) {
-            document.getElementById("loading-screen").style.display = "none";
-            document.getElementById("app").style.display = "block";
-            initApp();
-        }
-        // Sinon Firebase appellera _bootApp ou onValue s'en chargera
-    } else {
-        document.getElementById("login-error").textContent = "❌ Mot de passe incorrect";
-        document.getElementById("passwordInput").value = "";
-    }
+    crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
+        .then(function(buf) {
+            var hash = Array.from(new Uint8Array(buf))
+                           .map(function(b){ return b.toString(16).padStart(2,'0'); })
+                           .join('');
+            if (hash === window.APP_PASSWORD_HASH) {
+                sessionStorage.setItem("kanban_auth", "ok");
+                document.getElementById("login-screen").style.display  = "none";
+                document.getElementById("loading-screen").style.display = "flex";
+                if (window._firebaseReady && window._firstSyncDone) {
+                    document.getElementById("loading-screen").style.display = "none";
+                    document.getElementById("app").style.display = "block";
+                    initApp();
+                }
+            } else {
+                document.getElementById("login-error").textContent = "❌ Mot de passe incorrect";
+                document.getElementById("passwordInput").value = "";
+            }
+        });
 }
 
 function logout() {

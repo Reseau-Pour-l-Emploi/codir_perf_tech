@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -24,18 +25,6 @@
             background: var(--bg); color: var(--text); overflow-x: hidden;
         }
         body { padding: 16px; }
-
-        /* ── SETUP BANNER ── */
-        #setup-banner {
-            background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px;
-            padding: 14px 18px; margin-bottom: 14px; font-size: 0.85em; line-height: 1.6;
-            display: none;
-        }
-        #setup-banner strong { color: #856404; }
-        #setup-banner code {
-            background: #ffe69c; padding: 1px 5px; border-radius: 4px;
-            font-family: 'DM Mono', monospace; font-size: 0.95em;
-        }
 
         /* ── LOGIN ── */
         #login-screen {
@@ -84,10 +73,7 @@
             font-size: 0.75em; color: var(--muted); padding: 5px 10px;
             background: var(--bg); border-radius: 20px;
         }
-        #sync-dot {
-            width: 8px; height: 8px; border-radius: 50%; background: #ccc;
-            transition: background 0.3s;
-        }
+        #sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
         #sync-dot.synced  { background: #27ae60; }
         #sync-dot.syncing { background: #f39c12; animation: pulse 1s infinite; }
         #sync-dot.error   { background: #e74c3c; }
@@ -162,7 +148,6 @@
         }
         .task:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
         .task.dragging { opacity: 0.35; transform: rotate(1.5deg); }
-
         .last-mod    { position: absolute; top: 7px; right: 10px; font-size: 0.68em; color: #bbb; font-family: 'DM Mono', monospace; }
         .tag-theme   { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72em; font-weight: 700; color: white; margin-bottom: 7px; }
         .task-title  { display: block; font-weight: 700; font-size: 0.92em; margin-bottom: 4px; padding-right: 70px; line-height: 1.35; }
@@ -172,10 +157,8 @@
         .task-dates.overdue { color: #e74c3c; font-weight: 600; }
         .task-url    { display: block; font-size: 0.72em; color: #3498db; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 6px; border-top: 1px dashed #eee; padding-top: 5px; }
         .task-url:hover { text-decoration: underline; }
-
         .comment-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 5px 8px; margin-top: 5px; border-radius: 4px; font-size: 0.78em; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
         .del-com { color: #e74c3c; cursor: pointer; font-weight: bold; flex-shrink: 0; }
-
         .task-actions { margin-top: 9px; display: none; gap: 4px; border-top: 1px solid #f0f0f0; padding-top: 8px; flex-wrap: wrap; }
         .task:hover .task-actions { display: flex; }
         .task-actions button { padding: 4px 8px; font-size: 0.8em; border-radius: 6px; }
@@ -194,8 +177,7 @@
         .modal {
             background: white; padding: 28px; border-radius: 14px;
             width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-            animation: slideUp 0.2s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25); animation: slideUp 0.2s ease;
         }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .modal h3 { margin-bottom: 18px; font-size: 1.1em; font-weight: 700; }
@@ -224,7 +206,6 @@
             transition: transform 0.3s, opacity 0.3s; pointer-events: none;
         }
         #toast.show { transform: translateY(0); opacity: 1; }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
     </style>
@@ -246,14 +227,6 @@
 
 <!-- ═══ APP ═══ -->
 <div id="app">
-
-    <div id="setup-banner">
-        ⚠️ <strong>Firebase non configuré.</strong>
-        Ouvrez <code>index.html</code>, trouvez le bloc <code>FIREBASE CONFIG</code> et renseignez vos clés.
-        Consultez le <code>README.md</code> pour les instructions complètes.
-        Les données sont enregistrées localement en attendant.
-    </div>
-
     <div class="header-bar">
         <div class="header-left">
             <button class="btn-add"    onclick="openTaskForm()">➕ Nouvelle Tâche</button>
@@ -265,7 +238,7 @@
             <button class="btn-sort"   onclick="sortTasks()">🔃 Trier</button>
             <button class="btn-logout" onclick="logout()" title="Se déconnecter">🚪</button>
             <div id="weekRange" class="week-display">…</div>
-            <div id="sync-status"><div id="sync-dot"></div><span id="sync-label">—</span></div>
+            <div id="sync-status"><div id="sync-dot"></div><span id="sync-label">Connexion…</span></div>
         </div>
         <div class="header-right">
             <label>📝 Infos diverses</label>
@@ -292,8 +265,7 @@
         <h3 onclick="toggleArchives()">📦 Archives <span id="arch-count"></span>(cliquer pour afficher/masquer)</h3>
         <div id="archives-content" style="display:none;"></div>
     </div>
-
-</div><!-- fin #app -->
+</div>
 
 <!-- ═══ MODALE TÂCHE ═══ -->
 <div id="taskOverlay" class="overlay">
@@ -374,97 +346,71 @@
 
 <div id="toast"></div>
 
-<!-- ═══ FIREBASE SDK ═══ -->
+<!-- ═══ MOT DE PASSE (défini avant tout) ═══ -->
+<script>
+    window.APP_PASSWORD = "dirperf";
+    window._tasks  = [];
+    window._actors = [];
+    window._fbSet  = null;
+    window._fbRef  = null;
+</script>
+
+<!-- ═══ FIREBASE SDK (module) ═══ -->
 <script type="module">
-// ════════════════════════════════════════════════════════════════
-//  🔧 FIREBASE CONFIG — Remplacez ces valeurs par les vôtres
-//     (voir README.md pour les instructions pas à pas)
-// ════════════════════════════════════════════════════════════════
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    import { initializeApp }                  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAYZbOpYA_TezV-EuzT1nmAh7VvvxvX9Os",
-  authDomain: "codir-perf-tech.firebaseapp.com",
-  databaseURL: "https://codir-perf-tech-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "codir-perf-tech",
-  storageBucket: "codir-perf-tech.firebasestorage.app",
-  messagingSenderId: "644490678014",
-  appId: "1:644490678014:web:4fdd09fa938535072c5faf"
-};
+    const firebaseConfig = {
+        apiKey:            "AIzaSyAYZbOpYA_TezV-EuzT1nmAh7VvvxvX9Os",
+        authDomain:        "codir-perf-tech.firebaseapp.com",
+        databaseURL:       "https://codir-perf-tech-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId:         "codir-perf-tech",
+        storageBucket:     "codir-perf-tech.firebasestorage.app",
+        messagingSenderId: "644490678014",
+        appId:             "1:644490678014:web:4fdd09fa938535072c5faf"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// ════════════════════════════════════════════════════════════════
-//  🔑 MOT DE PASSE — Modifiez ici
-// ════════════════════════════════════════════════════════════════
-window.APP_PASSWORD  = "dirperf";
-window.FIREBASE_CONFIGURED = (FIREBASE_CONFIG.apiKey !== "VOTRE_API_KEY");
-
-import { initializeApp }                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-window._fbSet = null;
-window._fbRef = null;
-
-if (window.FIREBASE_CONFIGURED) {
-    const app = initializeApp(FIREBASE_CONFIG);
+    const app = initializeApp(firebaseConfig);
     const db  = getDatabase(app);
-    window._fbRef = ref(db, "kanban");
+    const dbRef = ref(db, "kanban");
 
-    // Écoute temps réel
-    onValue(window._fbRef, function(snapshot) {
+    window._fbRef = dbRef;
+
+    // Sync temps réel → met à jour l'affichage dès qu'une donnée change
+    onValue(dbRef, function(snapshot) {
         var data = snapshot.val();
         if (!data) return;
-        // On évite d'écraser si l'utilisateur est en train d'éditer
         if (document.getElementById("taskOverlay").classList.contains("open")) return;
-        window._tasks        = data.tasks   || [];
-        window._actors       = data.actors  || [];
-        var misc = data.misc || "";
-        var el   = document.getElementById("miscInfo");
-        if (el && document.activeElement !== el) el.value = misc;
+        window._tasks  = data.tasks  || [];
+        window._actors = data.actors || [];
+        var el = document.getElementById("miscInfo");
+        if (el && document.activeElement !== el) el.value = data.misc || "";
         if (typeof window.render === "function") window.render();
-        setSyncStatus("synced", "Synchronisé");
+        setSyncDot("synced", "Synchronisé ✓");
     });
 
     window._fbSet = function(payload) {
-        setSyncStatus("syncing", "Synchronisation…");
-        set(window._fbRef, payload).then(function() {
-            setSyncStatus("synced", "Synchronisé");
-        }).catch(function(err) {
-            console.error("Firebase error:", err);
-            setSyncStatus("error", "Erreur sync");
-            // Fallback localStorage
-            localStorage.setItem("kanban_data", JSON.stringify(payload));
-        });
+        setSyncDot("syncing", "Sync…");
+        set(dbRef, payload)
+            .then(function()  { setSyncDot("synced", "Synchronisé ✓"); })
+            .catch(function(e){ setSyncDot("error",  "Erreur sync"); console.error(e); });
     };
-}
 
-function setSyncStatus(state, label) {
-    var dot   = document.getElementById("sync-dot");
-    var lbl   = document.getElementById("sync-label");
-    if (!dot) return;
-    dot.className   = state;
-    lbl.textContent = label;
-}
-window.setSyncStatus = setSyncStatus;
+    function setSyncDot(cls, label) {
+        var d = document.getElementById("sync-dot");
+        var l = document.getElementById("sync-label");
+        if (d) d.className = cls;
+        if (l) l.textContent = label;
+    }
+    window.setSyncStatus = setSyncDot;
 
-// Lance l'app une fois le module chargé
-window._firebaseReady = true;
-if (typeof window._bootApp === "function") window._bootApp();
+    // Signal que Firebase est prêt
+    window._firebaseReady = true;
+    if (typeof window._bootApp === "function") window._bootApp();
 </script>
 
+<!-- ═══ LOGIQUE APPLICATIVE ═══ -->
 <script>
-// ════════════════════════════════════════════════
-//  ÉTAT GLOBAL
-// ════════════════════════════════════════════════
-window.APP_PASSWORD  = "dirperf";
-window._tasks  = [];
-window._actors = [];
-
 var themeConfig = {
     "performance": { label: "Performance", color: "#3498db" },
     "outils":      { label: "Outils",       color: "#9b59b6" },
@@ -474,16 +420,10 @@ var themeConfig = {
 };
 var prioEmojis = { "Haute": "🔴", "Normale": "🟡", "Basse": "🔵" };
 var currentTaskActors = [];
-var archivesOpen      = false;
-var _syncTimer        = null;
+var archivesOpen = false;
+var _syncTimer   = null;
 
-// Proxies vers window pour compatibilité
-function getTasks()  { return window._tasks;  }
-function getActors() { return window._actors; }
-
-// ════════════════════════════════════════════════
-//  AUTH
-// ════════════════════════════════════════════════
+// ── AUTH ──
 function checkPassword() {
     var input = document.getElementById("passwordInput").value;
     if (input === window.APP_PASSWORD) {
@@ -496,42 +436,20 @@ function checkPassword() {
         document.getElementById("passwordInput").value = "";
     }
 }
-
 function logout() {
-    if (confirm("Se déconnecter ?")) {
-        sessionStorage.removeItem("kanban_auth");
-        location.reload();
-    }
+    if (confirm("Se déconnecter ?")) { sessionStorage.removeItem("kanban_auth"); location.reload(); }
 }
 
-// ════════════════════════════════════════════════
-//  PERSISTANCE
-// ════════════════════════════════════════════════
+// ── PERSISTANCE ──
 function buildPayload() {
-    return {
-        tasks:  window._tasks,
-        actors: window._actors,
-        misc:   document.getElementById("miscInfo").value || ""
-    };
+    return { tasks: window._tasks, actors: window._actors, misc: document.getElementById("miscInfo").value || "" };
 }
-
 function saveData() {
     var payload = buildPayload();
-    // Toujours garder un backup local
     try { localStorage.setItem("kanban_data", JSON.stringify(payload)); } catch(e) {}
-
-    if (window._fbSet) {
-        window._fbSet(payload);
-    } else {
-        window.setSyncStatus && window.setSyncStatus("error", "Firebase non configuré");
-    }
+    if (window._fbSet) window._fbSet(payload);
 }
-
-function scheduleSync() {
-    clearTimeout(_syncTimer);
-    _syncTimer = setTimeout(saveData, 800);
-}
-
+function scheduleSync() { clearTimeout(_syncTimer); _syncTimer = setTimeout(saveData, 800); }
 function loadLocalFallback() {
     try {
         var raw = localStorage.getItem("kanban_data");
@@ -543,31 +461,15 @@ function loadLocalFallback() {
     } catch(e) {}
 }
 
-// ════════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════════
+// ── INIT ──
 function init() {
     updateWeekDisplay();
-
-    if (!window.FIREBASE_CONFIGURED) {
-        document.getElementById("setup-banner").style.display = "block";
-        loadLocalFallback();
-        window.setSyncStatus && window.setSyncStatus("error", "Local seulement");
-        checkAutoArchive();
-        render();
-    } else {
-        window.setSyncStatus && window.setSyncStatus("syncing", "Connexion…");
-        // onValue déclenche le render automatiquement
-        // On charge quand même le local en attendant
-        loadLocalFallback();
-        checkAutoArchive();
-        render();
-    }
-
+    loadLocalFallback(); // affichage immédiat depuis le cache local
+    checkAutoArchive();
+    render();
     updateActorsDatalist();
 }
 
-// Point d'entrée une fois Firebase prêt
 window._bootApp = function() {
     if (sessionStorage.getItem("kanban_auth") === "ok") {
         document.getElementById("login-screen").style.display = "none";
@@ -576,13 +478,11 @@ window._bootApp = function() {
     }
 };
 
-// Démarre aussi au onload au cas où Firebase est déjà prêt
 window.onload = function() {
     if (sessionStorage.getItem("kanban_auth") === "ok") {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("app").style.display = "block";
         if (window._firebaseReady) init();
-        // Sinon _bootApp sera appelé par le module
     }
 };
 
@@ -590,18 +490,14 @@ function checkAutoArchive() {
     var d = new Date(); d.setHours(0,0,0,0);
     var changed = false;
     window._tasks.forEach(function(t) {
-        if (t.end && !t.archived && new Date(t.end) < d) {
-            t.archived = true; t.lastMod = Date.now(); changed = true;
-        }
+        if (t.end && !t.archived && new Date(t.end) < d) { t.archived = true; t.lastMod = Date.now(); changed = true; }
     });
     if (changed) saveData();
 }
 
-// ════════════════════════════════════════════════
-//  RENDU
-// ════════════════════════════════════════════════
+// ── RENDU ──
 function render() {
-    window.render = render; // expose pour Firebase onValue
+    window.render = render;
     var cols = {
         todo:  document.querySelector("#todo  .task-list"),
         doing: document.querySelector("#doing .task-list"),
@@ -609,7 +505,7 @@ function render() {
     };
     if (!cols.todo) return;
     var arch = document.getElementById("archives-content");
-    Object.keys(cols).forEach(function(k){ cols[k].innerHTML=""; });
+    Object.keys(cols).forEach(function(k){ cols[k].innerHTML = ""; });
     arch.innerHTML = "";
     var counts = { todo:0, doing:0, done:0, arch:0 };
 
@@ -624,10 +520,10 @@ function render() {
         div.ondragend   = function(){ div.classList.remove('dragging'); };
 
         var now = new Date(); now.setHours(0,0,0,0);
-        var overdue  = t.end && !t.archived && new Date(t.end) < now;
-        var modDate  = t.lastMod ? new Date(t.lastMod).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '--/--';
-        var dateStr  = (t.start||t.end) ? '<div class="task-dates'+(overdue?' overdue':'')+'">📅 '+fmt(t.start)+' → '+fmt(t.end)+(overdue?' ⚠️':'')+'</div>' : '';
-        var urlStr   = t.url ? '<a href="'+t.url+'" target="_blank" class="task-url">🔗 '+t.url+'</a>' : '';
+        var overdue = t.end && !t.archived && new Date(t.end) < now;
+        var modDate = t.lastMod ? new Date(t.lastMod).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '--/--';
+        var dateStr = (t.start||t.end) ? '<div class="task-dates'+(overdue?' overdue':'')+'">📅 '+fmt(t.start)+' → '+fmt(t.end)+(overdue?' ⚠️':'')+'</div>' : '';
+        var urlStr  = t.url ? '<a href="'+t.url+'" target="_blank" class="task-url">🔗 '+t.url+'</a>' : '';
 
         div.innerHTML =
             '<div class="last-mod">'+modDate+'</div>'+
@@ -638,15 +534,14 @@ function render() {
             '<div style="margin:4px 0;">'+(t.actors||[]).map(function(a){ return '<span class="actor-label">'+esc(a)+'</span>'; }).join('')+'</div>'+
             urlStr+
             '<div>'+(t.comments||[]).map(function(c,i){
-                return '<div class="comment-box"><span>'+esc(c)+'</span>'+
-                       '<span class="del-com" onclick="deleteComment(\''+t.id+'\','+i+')">×</span></div>';
+                return '<div class="comment-box"><span>'+esc(c)+'</span><span class="del-com" onclick="deleteComment(\''+t.id+'\','+i+')">×</span></div>';
             }).join('')+'</div>'+
             '<div class="task-actions">'+
-                '<button onclick="addComment(\''+t.id+'\')" style="background:#2ecc71;">💬</button>'+
-                '<button onclick="editTask(\''+t.id+'\')"   style="background:#f39c12;">✎</button>'+
+                '<button onclick="addComment(\''+t.id+'\')"    style="background:#2ecc71;">💬</button>'+
+                '<button onclick="editTask(\''+t.id+'\')"      style="background:#f39c12;">✎</button>'+
                 '<button onclick="duplicateTask(\''+t.id+'\')" style="background:#3498db;">📄</button>'+
-                '<button onclick="archiveTask(\''+t.id+'\')" style="background:#7f8c8d;">'+(t.archived?'♻️':'📦')+'</button>'+
-                '<button onclick="deleteTask(\''+t.id+'\')"  style="background:#e74c3c;">🗑</button>'+
+                '<button onclick="archiveTask(\''+t.id+'\')"   style="background:#7f8c8d;">'+(t.archived?'♻️':'📦')+'</button>'+
+                '<button onclick="deleteTask(\''+t.id+'\')"    style="background:#e74c3c;">🗑</button>'+
             '</div>';
 
         if (t.archived) { arch.appendChild(div); counts.arch++; }
@@ -663,25 +558,20 @@ window.render = render;
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmt(d){ return d ? new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}) : '–'; }
 
-// ════════════════════════════════════════════════
-//  TRI
-// ════════════════════════════════════════════════
+// ── TRI ──
 function sortTasks() {
     window._tasks.sort(function(a,b){
         var la = themeConfig[a.theme]?themeConfig[a.theme].label:a.theme;
         var lb = themeConfig[b.theme]?themeConfig[b.theme].label:b.theme;
         if(la<lb) return -1; if(la>lb) return 1;
-        var da = a.end ? new Date(a.end) : new Date("9999-12-31");
-        var db = b.end ? new Date(b.end) : new Date("9999-12-31");
+        var da = a.end?new Date(a.end):new Date("9999-12-31");
+        var db = b.end?new Date(b.end):new Date("9999-12-31");
         return da-db;
     });
-    saveData(); render();
-    toast("✅ Tâches triées");
+    saveData(); render(); toast("✅ Tâches triées");
 }
 
-// ════════════════════════════════════════════════
-//  FORMULAIRE TÂCHE
-// ════════════════════════════════════════════════
+// ── FORMULAIRE TÂCHE ──
 function openTaskForm() {
     document.getElementById("taskId").value        = "";
     document.getElementById("titleInput").value    = "";
@@ -703,7 +593,7 @@ function closeTaskForm() { document.getElementById("taskOverlay").classList.remo
 function saveTask() {
     var title = document.getElementById("titleInput").value.trim();
     if (!title) { alert("Le titre est obligatoire."); return; }
-    var id  = document.getElementById("taskId").value;
+    var id = document.getElementById("taskId").value;
     var now = Date.now();
     var data = {
         title:    title,
@@ -718,16 +608,14 @@ function saveTask() {
         lastMod:  now
     };
     if (id) {
-        var t = window._tasks.find(function(x){ return x.id===id; });
-        Object.assign(t, data);
+        Object.assign(window._tasks.find(function(x){ return x.id===id; }), data);
         toast("✏️ Tâche modifiée");
     } else {
         data.id = "id_"+now; data.comments = []; data.archived = false;
         window._tasks.push(data);
         toast("✅ Tâche créée");
     }
-    checkAutoArchive(); saveData(); render();
-    closeTaskForm();
+    checkAutoArchive(); saveData(); render(); closeTaskForm();
 }
 
 function editTask(id) {
@@ -747,11 +635,9 @@ function editTask(id) {
     document.getElementById("taskOverlay").classList.add("open");
 }
 
-// ════════════════════════════════════════════════
-//  ACTIONS CARTES
-// ════════════════════════════════════════════════
+// ── ACTIONS CARTES ──
 function duplicateTask(id) {
-    var idx  = window._tasks.findIndex(function(x){ return x.id===id; });
+    var idx = window._tasks.findIndex(function(x){ return x.id===id; });
     var copy = JSON.parse(JSON.stringify(window._tasks[idx]));
     copy.id = "id_"+Date.now(); copy.title += " (Copie)"; copy.lastMod = Date.now();
     window._tasks.splice(idx+1, 0, copy);
@@ -766,7 +652,7 @@ function deleteComment(id, idx) {
     saveData(); render();
 }
 function deleteTask(id) {
-    if (!confirm("Supprimer définitivement cette tâche ?")) return;
+    if (!confirm("Supprimer définitivement ?")) return;
     window._tasks = window._tasks.filter(function(x){ return x.id!==id; });
     saveData(); render(); toast("🗑 Supprimé");
 }
@@ -776,9 +662,7 @@ function archiveTask(id) {
     saveData(); render(); toast(t.archived?"📦 Archivé":"♻️ Désarchivé");
 }
 
-// ════════════════════════════════════════════════
-//  DRAG & DROP
-// ════════════════════════════════════════════════
+// ── DRAG & DROP ──
 function allowDrop(e) { e.preventDefault(); }
 function drop(e) {
     e.preventDefault();
@@ -796,32 +680,30 @@ function drop(e) {
     saveData(); render();
 }
 function getDragAfterElement(container, y) {
-    return Array.prototype.slice.call(container.querySelectorAll('.task:not(.dragging)')).reduce(function(cl, ch){
-        var box = ch.getBoundingClientRect(), off = y-box.top-box.height/2;
-        if (off<0 && off>cl.offset) return {offset:off, element:ch};
+    return Array.prototype.slice.call(container.querySelectorAll('.task:not(.dragging)')).reduce(function(cl,ch){
+        var box=ch.getBoundingClientRect(), off=y-box.top-box.height/2;
+        if(off<0 && off>cl.offset) return {offset:off,element:ch};
         return cl;
-    }, {offset:Number.NEGATIVE_INFINITY}).element;
+    },{offset:Number.NEGATIVE_INFINITY}).element;
 }
 
-// ════════════════════════════════════════════════
-//  ACTEURS
-// ════════════════════════════════════════════════
+// ── ACTEURS ──
 document.getElementById("actorInput").addEventListener("input", function(){
-    var v = this.value.trim();
-    if (v && window._actors.indexOf(v)!==-1) {
-        if (currentTaskActors.indexOf(v)===-1){ currentTaskActors.push(v); renderTaskActorChips(); }
-        this.value = "";
+    var v=this.value.trim();
+    if(v && window._actors.indexOf(v)!==-1){
+        if(currentTaskActors.indexOf(v)===-1){ currentTaskActors.push(v); renderTaskActorChips(); }
+        this.value="";
     }
 });
 document.getElementById("actorInput").addEventListener("keypress", function(e){
-    if (e.key!=="Enter") return;
+    if(e.key!=="Enter") return;
     e.preventDefault();
-    var v = this.value.trim();
-    if (v) {
-        if (currentTaskActors.indexOf(v)===-1){ currentTaskActors.push(v); renderTaskActorChips(); }
-        if (window._actors.indexOf(v)===-1){ window._actors.push(v); updateActorsDatalist(); saveData(); }
+    var v=this.value.trim();
+    if(v){
+        if(currentTaskActors.indexOf(v)===-1){ currentTaskActors.push(v); renderTaskActorChips(); }
+        if(window._actors.indexOf(v)===-1){ window._actors.push(v); updateActorsDatalist(); saveData(); }
     }
-    this.value = "";
+    this.value="";
 });
 function updateActorsDatalist(){
     document.getElementById("actorsList").innerHTML = window._actors.map(function(a){ return '<option value="'+esc(a)+'">'; }).join("");
@@ -831,10 +713,10 @@ function renderTaskActorChips(){
         return '<span class="actor-label">'+esc(a)+' <span onclick="removeActorChip(\''+a+'\')" style="cursor:pointer">×</span></span>';
     }).join("");
 }
-function removeActorChip(a){ currentTaskActors = currentTaskActors.filter(function(x){ return x!==a; }); renderTaskActorChips(); }
+function removeActorChip(a){ currentTaskActors=currentTaskActors.filter(function(x){ return x!==a; }); renderTaskActorChips(); }
 function addActorToList(){
-    var n = document.getElementById("newActorName").value.trim();
-    if (n && window._actors.indexOf(n)===-1){ window._actors.push(n); updateActorsDatalist(); saveData(); openActorsModal(); document.getElementById("newActorName").value=""; }
+    var n=document.getElementById("newActorName").value.trim();
+    if(n && window._actors.indexOf(n)===-1){ window._actors.push(n); updateActorsDatalist(); saveData(); openActorsModal(); document.getElementById("newActorName").value=""; }
 }
 function openActorsModal(){
     document.getElementById("actorsOverlay").classList.add("open");
@@ -849,62 +731,54 @@ function openActorsModal(){
 function removeActor(i){ window._actors.splice(i,1); saveData(); openActorsModal(); updateActorsDatalist(); }
 function closeActorsModal(){ document.getElementById("actorsOverlay").classList.remove("open"); }
 
-// ════════════════════════════════════════════════
-//  EXPORT / IMPORT
-// ════════════════════════════════════════════════
+// ── EXPORT / IMPORT ──
 function exportCSV(){
-    if (!window._tasks.length) return alert("Aucune tâche.");
-    var h = ["ID","Thematique","Titre","Description","Statut","Priorite","Debut","Fin","Acteurs","URL","Archive","Commentaires","Derniere_Modif"];
-    var rows = window._tasks.map(function(t){
-        return [t.id, (themeConfig[t.theme]||{label:t.theme}).label, t.title, t.desc||"", t.status,
-                t.priority, t.start||"", t.end||"", (t.actors||[]).join(", "), t.url||"",
-                t.archived?"Oui":"Non", (t.comments||[]).join(" | "),
+    if(!window._tasks.length) return alert("Aucune tâche.");
+    var h=["ID","Thematique","Titre","Description","Statut","Priorite","Debut","Fin","Acteurs","URL","Archive","Commentaires","Derniere_Modif"];
+    var rows=window._tasks.map(function(t){
+        return [t.id,(themeConfig[t.theme]||{label:t.theme}).label,t.title,t.desc||"",t.status,
+                t.priority,t.start||"",t.end||"",(t.actors||[]).join(", "),t.url||"",
+                t.archived?"Oui":"Non",(t.comments||[]).join(" | "),
                 t.lastMod?new Date(t.lastMod).toLocaleString('fr-FR'):""
         ].map(function(v){ return '"'+v.toString().replace(/"/g,'""')+'"'; }).join(";");
     });
-    dl("\uFEFF"+h.join(";")+"\n"+rows.join("\n"), "Export_CODIR_"+td()+".csv", "text/csv;charset=utf-8;");
+    dl("\uFEFF"+h.join(";")+"\n"+rows.join("\n"),"Export_CODIR_"+td()+".csv","text/csv;charset=utf-8;");
 }
-function exportJSON(){
-    dl(JSON.stringify(buildPayload(),null,2), "Backup_CODIR_"+td()+".json", "application/json");
-}
+function exportJSON(){ dl(JSON.stringify(buildPayload(),null,2),"Backup_CODIR_"+td()+".json","application/json"); }
 function importJSON(event){
-    var file = event.target.files[0]; if(!file) return;
-    var reader = new FileReader();
-    reader.onload = function(e){
-        try {
-            var data = JSON.parse(e.target.result);
-            if (!data.tasks) throw new Error("Format invalide");
-            if (!confirm("Remplacer toutes les données actuelles ?")) return;
-            window._tasks  = data.tasks  || [];
-            window._actors = data.actors || [];
-            document.getElementById("miscInfo").value = data.misc||"";
+    var file=event.target.files[0]; if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+        try{
+            var data=JSON.parse(e.target.result);
+            if(!data.tasks) throw new Error("Format invalide");
+            if(!confirm("Remplacer toutes les données actuelles ?")) return;
+            window._tasks=data.tasks||[]; window._actors=data.actors||[];
+            document.getElementById("miscInfo").value=data.misc||"";
             checkAutoArchive(); saveData(); render();
             toast("✅ Import réussi — "+window._tasks.length+" tâches");
-        } catch(err){ alert("❌ "+err.message); }
+        }catch(err){ alert("❌ "+err.message); }
     };
     reader.readAsText(file);
-    event.target.value = "";
+    event.target.value="";
 }
-function dl(content, name, type){
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([content],{type:type}));
-    a.download = name;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+function dl(content,name,type){
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([content],{type:type}));
+    a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 function td(){ return new Date().toISOString().split('T')[0]; }
 
-// ════════════════════════════════════════════════
-//  UTILITAIRES
-// ════════════════════════════════════════════════
+// ── UTILITAIRES ──
 function updateWeekDisplay(){
-    var now=new Date(), d=now.getDay(), diff=d===0?-6:1-d;
+    var now=new Date(),d=now.getDay(),diff=d===0?-6:1-d;
     var mon=new Date(now); mon.setDate(now.getDate()+diff);
     var fri=new Date(mon); fri.setDate(mon.getDate()+4);
     document.getElementById("weekRange").innerText="Semaine du "+mon.getDate()+" au "+fri.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
 }
 function toggleArchives(){
-    archivesOpen = !archivesOpen;
-    document.getElementById("archives-content").style.display = archivesOpen?"flex":"none";
+    archivesOpen=!archivesOpen;
+    document.getElementById("archives-content").style.display=archivesOpen?"flex":"none";
 }
 var _tt;
 function toast(msg){
@@ -912,7 +786,7 @@ function toast(msg){
     clearTimeout(_tt); _tt=setTimeout(function(){ el.classList.remove("show"); },2500);
 }
 document.querySelectorAll('.overlay').forEach(function(o){
-    o.addEventListener('click', function(e){ if(e.target===o) o.classList.remove('open'); });
+    o.addEventListener('click',function(e){ if(e.target===o) o.classList.remove('open'); });
 });
 </script>
 </body>

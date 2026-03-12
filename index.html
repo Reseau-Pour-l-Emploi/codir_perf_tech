@@ -237,8 +237,8 @@
             <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
             <button class="btn-sort"   onclick="sortTasks()">🔃 Trier</button>
             <button class="btn-logout" onclick="logout()" title="Se déconnecter">🚪</button>
-            <div id="weekRange" class="week-display">…</div>
-            <div id="sync-status"><div id="sync-dot"></div><span id="sync-label">Connexion…</span></div>
+            <div id="weekRange" class="week-display" style="display:none;"></div>
+            <div id="sync-status" style="display:none;"><div id="sync-dot"></div><span id="sync-label"></span></div>
         </div>
         <div class="header-right">
             <label>📝 Infos diverses</label>
@@ -463,6 +463,8 @@ function loadLocalFallback() {
 
 // ── INIT ──
 function init() {
+    document.getElementById("weekRange").style.display = "block";   // ← ajouter
+    document.getElementById("sync-status").style.display = "flex";  // ← ajouter
     updateWeekDisplay();
     loadLocalFallback(); // affichage immédiat depuis le cache local
     checkAutoArchive();

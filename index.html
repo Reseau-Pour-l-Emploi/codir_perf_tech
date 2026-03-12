@@ -128,10 +128,17 @@
             transition: border-color 0.2s;
         }
         .header-right textarea:focus { outline: none; border-color: #3498db; }
-        .week-display {
-            font-weight: 600; color: var(--text); font-size: 0.82em;
-            background: var(--bg); padding: 8px 14px; border-radius: 20px; white-space: nowrap;
+        .codir-date-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--bg); padding: 6px 12px; border-radius: 20px; white-space: nowrap;
         }
+        .codir-date-wrap label { font-weight: 700; font-size: 0.8em; color: var(--text); white-space: nowrap; }
+        .codir-date-wrap input[type=date] {
+            border: 1.5px solid var(--border); border-radius: 8px; padding: 4px 8px;
+            font-size: 0.82em; font-family: inherit; background: white; color: var(--text);
+            width: auto;
+        }
+        .codir-date-wrap input[type=date]:focus { outline: none; border-color: #3498db; }
 
         /* ── BUTTONS ── */
         button {
@@ -225,7 +232,11 @@
         .btn-save   { background: #27ae60; }
         .btn-cancel { background: #95a5a6; }
 
-        /* ── TOAST ── */
+        /* ── MISC INFO BUTTON ── */
+        .btn-misc { background: #16a085; position: relative; }
+        .btn-misc .misc-date { font-size: 0.72em; opacity: 0.8; font-weight: 400; }
+        #miscOverlay .modal { max-width: 520px; }
+        #miscTextarea { width: 100%; min-height: 180px; resize: vertical; font-family: inherit; font-size: 0.9em; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; background: #fffdf2; }
         #toast {
             position: fixed; bottom: 24px; right: 24px;
             background: #2c3e50; color: white; padding: 12px 20px;
@@ -274,33 +285,36 @@
             <button class="btn-add"    onclick="openTaskForm()">➕ Nouvelle Tâche</button>
             <button class="btn-actors" onclick="openActorsModal()">👥 Acteurs</button>
             <button class="btn-export" onclick="exportCSV()">📊 Export CSV</button>
-            <button class="btn-backup" onclick="exportJSON()">💾 Backup JSON</button>
-            <button class="btn-backup" style="background:#c0392b;" onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
-            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
             <button class="btn-sort"   onclick="sortTasks()">🔃 Trier</button>
+            <button class="btn-misc"   onclick="openMiscModal()" id="miscBtn">📝 Infos diverses<span class="misc-date" id="miscDateLabel"></span></button>
             <button class="btn-logout" onclick="logout()" title="Se déconnecter">🚪</button>
-            <div id="weekRange" class="week-display"></div>
+            <div class="codir-date-wrap">
+                <label>📅 Prochain CODIR</label>
+                <input type="date" id="codirDate" onchange="saveCodirDate()">
+            </div>
             <div id="sync-status"><div id="sync-dot" class="synced"></div><span id="sync-label">Synchronisé ✓</span></div>
-        </div>
-        <div class="header-right">
-            <label>📝 Infos diverses</label>
-            <textarea id="miscInfo" placeholder="Notes, jalons, rappels..." oninput="scheduleSync()"></textarea>
         </div>
     </div>
 
     <div id="kanban">
         <div class="column" id="todo">
-            <h2>Cette semaine <span class="col-count" id="cnt-todo">0</span></h2>
+            <h2>À traiter d'ici le prochain CODIR <span class="col-count" id="cnt-todo">0</span></h2>
             <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
         <div class="column" id="doing">
-            <h2>Prochaines semaines <span class="col-count" id="cnt-doing">0</span></h2>
+            <h2>Points à inscrire à l'ordre du jour du CODIR <span class="col-count" id="cnt-doing">0</span></h2>
             <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
         <div class="column" id="done">
-            <h2>Sujets importants <span class="col-count" id="cnt-done">0</span></h2>
+            <h2>Sujets structurants / de transformation <span class="col-count" id="cnt-done">0</span></h2>
             <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px; padding-right:2px;">
+        <button class="btn-backup" onclick="exportJSON()">💾 Backup JSON</button>
+        <button class="btn-backup" style="background:#c0392b;" onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
     </div>
 
     <div id="archives-section">
@@ -317,11 +331,14 @@
         <div class="form-group">
             <label>Thématique</label>
             <select id="theme">
-                <option value="performance">Analyse et pilotage performance</option>
-                <option value="outils">Outils</option>
-                <option value="animation">Animation performance</option>
-                <option value="efficience">Efficience et moyens</option>
-                <option value="interne">Interne direction</option>
+                <option value="produits_outils">Produits / Outils IT</option>
+                <option value="architecture">Architecture SI</option>
+                <option value="referentiels">Référentiels &amp; qualité des données</option>
+                <option value="donnees_ext">Données externes</option>
+                <option value="gouvernance">Gouvernance</option>
+                <option value="besoins_metiers">Besoins métiers</option>
+                <option value="deploiement">Déploiement, exploitation &amp; support</option>
+                <option value="partenariats">Partenariats externes</option>
             </select>
         </div>
         <div class="form-group">
@@ -354,9 +371,9 @@
             <div class="form-group">
                 <label>Colonne</label>
                 <select id="status">
-                    <option value="todo">Cette semaine</option>
-                    <option value="doing">Prochaines semaines</option>
-                    <option value="done">Sujets importants</option>
+                    <option value="todo">À traiter d'ici le prochain CODIR</option>
+                    <option value="doing">Points à inscrire à l'ordre du jour du CODIR</option>
+                    <option value="done">Sujets structurants / de transformation</option>
                 </select>
             </div>
         </div>
@@ -386,15 +403,33 @@
     </div>
 </div>
 
+<!-- ═══ MODALE INFOS DIVERSES ═══ -->
+<div id="miscOverlay" class="overlay">
+    <div class="modal" id="miscOverlay-modal">
+        <h3>📝 Infos diverses</h3>
+        <div class="form-group">
+            <label>Notes, jalons, rappels…</label>
+            <textarea id="miscTextarea" placeholder="Saisissez vos infos ici..." rows="8"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-save"   onclick="saveMiscInfo()">✔ Enregistrer</button>
+            <button class="btn-cancel" onclick="closeMiscModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
 <div id="toast"></div>
 
 <!-- ═══ VARIABLES GLOBALES (avant tout) ═══ -->
 <script>
     window.APP_PASSWORD_HASH = "37b09ae28e532f6b0a0fa3c3ef0dc2a19ba15b9e159f633c1c5ea26dea18bdd8";
-    window._tasks          = [];
-    window._actors         = [];
-    window._fbSet          = null;
-    window._firstSyncDone  = false; // ← clé : bloque l'app jusqu'au 1er sync
+    window._tasks         = [];
+    window._actors        = [];
+    window._fbSet         = null;
+    window._firstSyncDone = false;
+    window._miscText      = "";
+    window._miscLastDate  = "";
+    window._codirDate     = "";
 </script>
 
 <!-- ═══ FIREBASE SDK ═══ -->
@@ -428,14 +463,14 @@
     onValue(dbRef, function(snapshot) {
         var data = snapshot.val() || {};
 
-        // ── Premier sync : on remplace et on affiche l'app ──
         if (!window._firstSyncDone) {
             clearTimeout(loadingTimeout);
             window._firstSyncDone = true;
-            window._tasks  = data.tasks  || [];
-            window._actors = data.actors || [];
-            var el = document.getElementById("miscInfo");
-            if (el) el.value = data.misc || "";
+            window._tasks         = data.tasks  || [];
+            window._actors        = data.actors || [];
+            window._miscText      = data.misc || "";
+            window._miscLastDate  = data.miscLastDate || "";
+            window._codirDate     = data.codirDate || "";
             // Cacher loading, afficher app
             document.getElementById("loading-screen").style.display = "none";
             document.getElementById("app").style.display = "block";
@@ -443,10 +478,14 @@
         } else {
             // ── Syncs suivants : mise à jour seulement si pas en édition ──
             if (document.getElementById("taskOverlay").classList.contains("open")) return;
-            window._tasks  = data.tasks  || [];
-            window._actors = data.actors || [];
-            var el2 = document.getElementById("miscInfo");
-            if (el2 && document.activeElement !== el2) el2.value = data.misc || "";
+            window._tasks        = data.tasks  || [];
+            window._actors       = data.actors || [];
+            window._miscText     = data.misc || "";
+            window._miscLastDate = data.miscLastDate || "";
+            window._codirDate    = data.codirDate || "";
+            var cd = document.getElementById("codirDate");
+            if (cd && document.activeElement !== cd) cd.value = window._codirDate;
+            updateMiscDateLabel();
             if (typeof window.render === "function") window.render();
         }
 
@@ -475,11 +514,14 @@
 <!-- ═══ LOGIQUE APP ═══ -->
 <script>
 var themeConfig = {
-    "performance": { label: "Performance", color: "#3498db" },
-    "outils":      { label: "Outils",       color: "#9b59b6" },
-    "animation":   { label: "Animation",    color: "#e67e22" },
-    "efficience":  { label: "Efficience",   color: "#1abc9c" },
-    "interne":     { label: "Interne",       color: "#34495e" }
+    "produits_outils":  { label: "Produits / Outils IT",                  color: "#3498db" },
+    "architecture":     { label: "Architecture SI",                         color: "#9b59b6" },
+    "referentiels":     { label: "Référentiels & qualité des données",      color: "#e67e22" },
+    "donnees_ext":      { label: "Données externes",                        color: "#1abc9c" },
+    "gouvernance":      { label: "Gouvernance",                             color: "#e74c3c" },
+    "besoins_metiers":  { label: "Besoins métiers",                         color: "#2980b9" },
+    "deploiement":      { label: "Déploiement, exploitation & support",     color: "#27ae60" },
+    "partenariats":     { label: "Partenariats externes",                   color: "#d35400" }
 };
 var prioEmojis       = { "Haute": "🔴", "Normale": "🟡", "Basse": "🔵" };
 var currentTaskActors = [];
@@ -528,9 +570,13 @@ window._bootApp = function() {
 
 // Appelé quand les données Firebase sont disponibles ET l'utilisateur connecté
 window.initApp = function() {
-    updateWeekDisplay();
     checkAutoArchive();
     updateActorsDatalist();
+    // Load CODIR date
+    var cd = document.getElementById("codirDate");
+    if (cd && window._codirDate) cd.value = window._codirDate;
+    // Load misc date label
+    updateMiscDateLabel();
     render();
 };
 
@@ -548,7 +594,13 @@ window.onload = function() {
 
 // ── PERSISTANCE ──
 function buildPayload() {
-    return { tasks: window._tasks, actors: window._actors, misc: document.getElementById("miscInfo").value || "" };
+    return {
+        tasks:        window._tasks,
+        actors:       window._actors,
+        misc:         window._miscText || "",
+        miscLastDate: window._miscLastDate || "",
+        codirDate:    document.getElementById("codirDate") ? document.getElementById("codirDate").value : (window._codirDate||"")
+    };
 }
 function saveData() {
     var payload = buildPayload();
@@ -825,8 +877,14 @@ function importJSON(event){
             var data=JSON.parse(e.target.result);
             if(!data.tasks) throw new Error("Format invalide");
             if(!confirm("Remplacer toutes les données actuelles ?")) return;
-            window._tasks=data.tasks||[]; window._actors=data.actors||[];
-            document.getElementById("miscInfo").value=data.misc||"";
+            window._tasks        = data.tasks  || [];
+            window._actors       = data.actors || [];
+            window._miscText     = data.misc   || "";
+            window._miscLastDate = data.miscLastDate || "";
+            window._codirDate    = data.codirDate || "";
+            var cd = document.getElementById("codirDate");
+            if (cd) cd.value = window._codirDate;
+            updateMiscDateLabel();
             checkAutoArchive(); saveData(); render();
             toast("✅ Import réussi — "+window._tasks.length+" tâches");
         }catch(err){ alert("❌ "+err.message); }
@@ -841,11 +899,36 @@ function dl(content,name,type){
 function td(){ return new Date().toISOString().split('T')[0]; }
 
 // ── UTILITAIRES ──
-function updateWeekDisplay(){
-    var now=new Date(),d=now.getDay(),diff=d===0?-6:1-d;
-    var mon=new Date(now); mon.setDate(now.getDate()+diff);
-    var fri=new Date(mon); fri.setDate(mon.getDate()+4);
-    document.getElementById("weekRange").innerText="Semaine du "+mon.getDate()+" au "+fri.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+function saveCodirDate() {
+    saveData();
+}
+
+function updateMiscDateLabel() {
+    var label = document.getElementById("miscDateLabel");
+    if (!label) return;
+    if (window._miscLastDate) {
+        var d = new Date(window._miscLastDate);
+        label.textContent = " — " + d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
+    } else {
+        label.textContent = "";
+    }
+}
+
+function openMiscModal() {
+    document.getElementById("miscTextarea").value = window._miscText || "";
+    document.getElementById("miscOverlay").classList.add("open");
+    setTimeout(function(){ document.getElementById("miscTextarea").focus(); }, 100);
+}
+function closeMiscModal() {
+    document.getElementById("miscOverlay").classList.remove("open");
+}
+function saveMiscInfo() {
+    window._miscText     = document.getElementById("miscTextarea").value;
+    window._miscLastDate = new Date().toISOString();
+    updateMiscDateLabel();
+    saveData();
+    closeMiscModal();
+    toast("✅ Infos sauvegardées");
 }
 function toggleArchives(){
     archivesOpen=!archivesOpen;

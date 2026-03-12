@@ -169,7 +169,12 @@
         #todo  h2 { background: #e74c3c; }
         #doing h2 { background: #e67e22; }
         #done  h2 { background: #27ae60; }
-        .col-count {
+        .col-sub {
+            display: inline-block; margin-top: 5px;
+            background: rgba(255,255,255,0.22); color: rgba(255,255,255,0.92);
+            font-size: 0.72em; font-weight: 500; letter-spacing: 0.2px;
+            padding: 2px 9px; border-radius: 10px; text-transform: none;
+        }
             display: inline-block; background: rgba(255,255,255,0.3);
             padding: 1px 7px; border-radius: 10px; font-size: 0.75em; margin-left: 6px;
         }
@@ -298,15 +303,15 @@
 
     <div id="kanban">
         <div class="column" id="todo">
-            <h2>À traiter d'ici le prochain CODIR <span class="col-count" id="cnt-todo">0</span></h2>
+            <h2>À traiter d'ici le prochain CODIR <span class="col-count" id="cnt-todo">0</span><br><span class="col-sub">informations à partager, rendez-vous, actions en cours</span></h2>
             <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
         <div class="column" id="doing">
-            <h2>Points à inscrire à l'ordre du jour du CODIR <span class="col-count" id="cnt-doing">0</span></h2>
+            <h2>Points à inscrire à l'ordre du jour du CODIR <span class="col-count" id="cnt-doing">0</span><br><span class="col-sub">sujets nécessitant présentation, discussion ou arbitrage</span></h2>
             <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
         <div class="column" id="done">
-            <h2>Sujets structurants / de transformation <span class="col-count" id="cnt-done">0</span></h2>
+            <h2>Sujets structurants / de transformation <span class="col-count" id="cnt-done">0</span><br><span class="col-sub">enjeux stratégiques, évolutions majeures, trajectoires long terme</span></h2>
             <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         </div>
     </div>

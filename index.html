@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,14 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:      #f0f2f5;
-            --white:   #ffffff;
-            --border:  #e2e6ea;
-            --text:    #2c3e50;
-            --muted:   #7f8c8d;
+            --bg:        #f0f2f5;
+            --white:     #ffffff;
+            --border:    #e2e6ea;
+            --text:      #2c3e50;
+            --muted:     #7f8c8d;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-            --radius: 10px;
+            --radius:    10px;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
@@ -26,13 +25,15 @@
         }
         body { padding: 16px; }
 
-        /* ── LOGIN ── */
-        #login-screen {
+        /* ── FOND COMMUN LOGIN / LOADING ── */
+        .fullscreen {
             position: fixed; inset: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             display: flex; align-items: center; justify-content: center; z-index: 9999;
         }
-        #login-box {
+
+        /* ── LOGIN ── */
+        #login-screen .box {
             background: rgba(255,255,255,0.06);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.12);
@@ -40,10 +41,10 @@
             text-align: center; min-width: 340px;
             box-shadow: 0 24px 60px rgba(0,0,0,0.5);
         }
-        #login-box .app-title { font-size: 1.5em; font-weight: 700; color: white; margin-bottom: 4px; }
-        #login-box .app-sub   { color: rgba(255,255,255,0.4); font-size: 0.82em; margin-bottom: 28px; }
-        #login-box .lock-icon { font-size: 2.2em; margin-bottom: 12px; display: block; }
-        #login-box input {
+        .app-title  { font-size: 1.5em; font-weight: 700; color: white; margin-bottom: 4px; }
+        .app-sub    { color: rgba(255,255,255,0.4); font-size: 0.82em; margin-bottom: 28px; }
+        .lock-icon  { font-size: 2.2em; margin-bottom: 12px; display: block; }
+        #login-screen input {
             width: 100%; padding: 14px 16px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.15);
@@ -52,8 +53,8 @@
             font-family: 'DM Mono', monospace;
             transition: border-color 0.2s; margin-bottom: 10px;
         }
-        #login-box input::placeholder { color: rgba(255,255,255,0.25); letter-spacing: 1px; font-size: 0.9em; }
-        #login-box input:focus { outline: none; border-color: rgba(255,255,255,0.4); }
+        #login-screen input::placeholder { color: rgba(255,255,255,0.25); letter-spacing: 1px; font-size: 0.9em; }
+        #login-screen input:focus { outline: none; border-color: rgba(255,255,255,0.4); }
         #login-error { color: #e74c3c; font-size: 0.82em; min-height: 20px; margin-bottom: 8px; }
         #login-btn {
             width: 100%; padding: 14px;
@@ -67,13 +68,40 @@
         }
         #login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(52,152,219,0.5); }
 
+        /* ── LOADING ── */
+        #loading-screen { display: none; }
+        #loading-screen .box {
+            text-align: center; color: white;
+        }
+        .spinner {
+            width: 48px; height: 48px; margin: 0 auto 24px;
+            border: 4px solid rgba(255,255,255,0.15);
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-title { font-size: 1.3em; font-weight: 700; margin-bottom: 8px; }
+        .loading-sub   { color: rgba(255,255,255,0.45); font-size: 0.85em; }
+        .loading-error {
+            margin-top: 20px; padding: 12px 16px;
+            background: rgba(231,76,60,0.2); border: 1px solid rgba(231,76,60,0.4);
+            border-radius: 8px; color: #e74c3c; font-size: 0.82em; display: none;
+        }
+        .loading-retry {
+            margin-top: 14px; padding: 10px 24px;
+            background: #3498db; border: none; border-radius: 8px;
+            color: white; font-size: 0.9em; font-weight: 600;
+            cursor: pointer; font-family: inherit; display: none;
+        }
+
         /* ── SYNC INDICATOR ── */
         #sync-status {
             display: inline-flex; align-items: center; gap: 6px;
             font-size: 0.75em; color: var(--muted); padding: 5px 10px;
             background: var(--bg); border-radius: 20px;
         }
-        #sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
+        #sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #27ae60; transition: background 0.3s; }
         #sync-dot.synced  { background: #27ae60; }
         #sync-dot.syncing { background: #f39c12; animation: pulse 1s infinite; }
         #sync-dot.error   { background: #e74c3c; }
@@ -213,8 +241,8 @@
 <body>
 
 <!-- ═══ LOGIN ═══ -->
-<div id="login-screen">
-    <div id="login-box">
+<div id="login-screen" class="fullscreen">
+    <div class="box">
         <span class="lock-icon">🔒</span>
         <div class="app-title">CODIR Perf & Tech</div>
         <div class="app-sub">Tableau de bord collaboratif</div>
@@ -222,6 +250,19 @@
                onkeypress="if(event.key==='Enter') checkPassword()">
         <div id="login-error"></div>
         <button id="login-btn" onclick="checkPassword()">Accéder →</button>
+    </div>
+</div>
+
+<!-- ═══ LOADING (après login, avant 1er sync Firebase) ═══ -->
+<div id="loading-screen" class="fullscreen">
+    <div class="box">
+        <div class="spinner"></div>
+        <div class="loading-title">Connexion en cours…</div>
+        <div class="loading-sub">Synchronisation avec la base de données</div>
+        <div class="loading-error" id="loading-error">
+            ❌ Impossible de contacter Firebase.<br>Vérifiez votre connexion internet.
+        </div>
+        <button class="loading-retry" id="loading-retry" onclick="location.reload()">🔄 Réessayer</button>
     </div>
 </div>
 
@@ -237,8 +278,8 @@
             <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
             <button class="btn-sort"   onclick="sortTasks()">🔃 Trier</button>
             <button class="btn-logout" onclick="logout()" title="Se déconnecter">🚪</button>
-            <div id="weekRange" class="week-display" style="display:none;"></div>
-            <div id="sync-status" style="display:none;"><div id="sync-dot"></div><span id="sync-label"></span></div>
+            <div id="weekRange" class="week-display"></div>
+            <div id="sync-status"><div id="sync-dot" class="synced"></div><span id="sync-label">Synchronisé ✓</span></div>
         </div>
         <div class="header-right">
             <label>📝 Infos diverses</label>
@@ -346,16 +387,16 @@
 
 <div id="toast"></div>
 
-<!-- ═══ MOT DE PASSE (défini avant tout) ═══ -->
+<!-- ═══ VARIABLES GLOBALES (avant tout) ═══ -->
 <script>
-    window.APP_PASSWORD = "dirperf";
-    window._tasks  = [];
-    window._actors = [];
-    window._fbSet  = null;
-    window._fbRef  = null;
+    window.APP_PASSWORD    = "dirperf";
+    window._tasks          = [];
+    window._actors         = [];
+    window._fbSet          = null;
+    window._firstSyncDone  = false; // ← clé : bloque l'app jusqu'au 1er sync
 </script>
 
-<!-- ═══ FIREBASE SDK (module) ═══ -->
+<!-- ═══ FIREBASE SDK ═══ -->
 <script type="module">
     import { initializeApp }                  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -370,30 +411,52 @@
         appId:             "1:644490678014:web:4fdd09fa938535072c5faf"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db  = getDatabase(app);
+    const app   = initializeApp(firebaseConfig);
+    const db    = getDatabase(app);
     const dbRef = ref(db, "kanban");
 
-    window._fbRef = dbRef;
+    // Timeout : si Firebase ne répond pas en 8s → afficher erreur
+    var loadingTimeout = setTimeout(function() {
+        if (!window._firstSyncDone) {
+            document.getElementById("loading-error").style.display = "block";
+            document.getElementById("loading-retry").style.display = "inline-block";
+            document.querySelector("#loading-screen .loading-sub").textContent = "La connexion a échoué.";
+        }
+    }, 8000);
 
-    // Sync temps réel → met à jour l'affichage dès qu'une donnée change
     onValue(dbRef, function(snapshot) {
-        var data = snapshot.val();
-        if (!data) return;
-        if (document.getElementById("taskOverlay").classList.contains("open")) return;
-        window._tasks  = data.tasks  || [];
-        window._actors = data.actors || [];
-        var el = document.getElementById("miscInfo");
-        if (el && document.activeElement !== el) el.value = data.misc || "";
-        if (typeof window.render === "function") window.render();
+        var data = snapshot.val() || {};
+
+        // ── Premier sync : on remplace et on affiche l'app ──
+        if (!window._firstSyncDone) {
+            clearTimeout(loadingTimeout);
+            window._firstSyncDone = true;
+            window._tasks  = data.tasks  || [];
+            window._actors = data.actors || [];
+            var el = document.getElementById("miscInfo");
+            if (el) el.value = data.misc || "";
+            // Cacher loading, afficher app
+            document.getElementById("loading-screen").style.display = "none";
+            document.getElementById("app").style.display = "block";
+            if (typeof window.initApp === "function") window.initApp();
+        } else {
+            // ── Syncs suivants : mise à jour seulement si pas en édition ──
+            if (document.getElementById("taskOverlay").classList.contains("open")) return;
+            window._tasks  = data.tasks  || [];
+            window._actors = data.actors || [];
+            var el2 = document.getElementById("miscInfo");
+            if (el2 && document.activeElement !== el2) el2.value = data.misc || "";
+            if (typeof window.render === "function") window.render();
+        }
+
         setSyncDot("synced", "Synchronisé ✓");
     });
 
     window._fbSet = function(payload) {
         setSyncDot("syncing", "Sync…");
         set(dbRef, payload)
-            .then(function()  { setSyncDot("synced", "Synchronisé ✓"); })
-            .catch(function(e){ setSyncDot("error",  "Erreur sync"); console.error(e); });
+            .then(function()  { setSyncDot("synced",  "Synchronisé ✓"); })
+            .catch(function(e){ setSyncDot("error",   "Erreur sync ✗"); console.error(e); });
     };
 
     function setSyncDot(cls, label) {
@@ -404,12 +467,11 @@
     }
     window.setSyncStatus = setSyncDot;
 
-    // Signal que Firebase est prêt
     window._firebaseReady = true;
     if (typeof window._bootApp === "function") window._bootApp();
 </script>
 
-<!-- ═══ LOGIQUE APPLICATIVE ═══ -->
+<!-- ═══ LOGIQUE APP ═══ -->
 <script>
 var themeConfig = {
     "performance": { label: "Performance", color: "#3498db" },
@@ -418,27 +480,67 @@ var themeConfig = {
     "efficience":  { label: "Efficience",   color: "#1abc9c" },
     "interne":     { label: "Interne",       color: "#34495e" }
 };
-var prioEmojis = { "Haute": "🔴", "Normale": "🟡", "Basse": "🔵" };
+var prioEmojis       = { "Haute": "🔴", "Normale": "🟡", "Basse": "🔵" };
 var currentTaskActors = [];
-var archivesOpen = false;
-var _syncTimer   = null;
+var archivesOpen      = false;
+var _syncTimer        = null;
 
 // ── AUTH ──
 function checkPassword() {
     var input = document.getElementById("passwordInput").value;
     if (input === window.APP_PASSWORD) {
         sessionStorage.setItem("kanban_auth", "ok");
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("app").style.display = "block";
-        init();
+        // Cacher login, afficher écran de chargement
+        document.getElementById("login-screen").style.display  = "none";
+        document.getElementById("loading-screen").style.display = "flex";
+        // Si Firebase déjà prêt, démarrer directement
+        if (window._firebaseReady && window._firstSyncDone) {
+            document.getElementById("loading-screen").style.display = "none";
+            document.getElementById("app").style.display = "block";
+            initApp();
+        }
+        // Sinon Firebase appellera _bootApp ou onValue s'en chargera
     } else {
         document.getElementById("login-error").textContent = "❌ Mot de passe incorrect";
         document.getElementById("passwordInput").value = "";
     }
 }
+
 function logout() {
-    if (confirm("Se déconnecter ?")) { sessionStorage.removeItem("kanban_auth"); location.reload(); }
+    if (confirm("Se déconnecter ?")) {
+        sessionStorage.removeItem("kanban_auth");
+        location.reload();
+    }
 }
+
+// Appelé par Firebase une fois le premier sync reçu
+window._bootApp = function() {
+    if (sessionStorage.getItem("kanban_auth") === "ok") {
+        document.getElementById("login-screen").style.display   = "none";
+        document.getElementById("loading-screen").style.display = "flex";
+        // onValue s'occupera du reste quand les données arriveront
+    }
+};
+
+// Appelé quand les données Firebase sont disponibles ET l'utilisateur connecté
+window.initApp = function() {
+    updateWeekDisplay();
+    checkAutoArchive();
+    updateActorsDatalist();
+    render();
+};
+
+window.onload = function() {
+    if (sessionStorage.getItem("kanban_auth") === "ok") {
+        document.getElementById("login-screen").style.display   = "none";
+        document.getElementById("loading-screen").style.display = "flex";
+        if (window._firebaseReady && window._firstSyncDone) {
+            document.getElementById("loading-screen").style.display = "none";
+            document.getElementById("app").style.display = "block";
+            initApp();
+        }
+    }
+};
 
 // ── PERSISTANCE ──
 function buildPayload() {
@@ -450,44 +552,8 @@ function saveData() {
     if (window._fbSet) window._fbSet(payload);
 }
 function scheduleSync() { clearTimeout(_syncTimer); _syncTimer = setTimeout(saveData, 800); }
-function loadLocalFallback() {
-    try {
-        var raw = localStorage.getItem("kanban_data");
-        if (!raw) return;
-        var data = JSON.parse(raw);
-        window._tasks  = data.tasks  || [];
-        window._actors = data.actors || [];
-        document.getElementById("miscInfo").value = data.misc || "";
-    } catch(e) {}
-}
 
-// ── INIT ──
-function init() {
-    document.getElementById("weekRange").style.display = "block";   // ← ajouter
-    document.getElementById("sync-status").style.display = "flex";  // ← ajouter
-    updateWeekDisplay();
-    loadLocalFallback(); // affichage immédiat depuis le cache local
-    checkAutoArchive();
-    render();
-    updateActorsDatalist();
-}
-
-window._bootApp = function() {
-    if (sessionStorage.getItem("kanban_auth") === "ok") {
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("app").style.display = "block";
-        init();
-    }
-};
-
-window.onload = function() {
-    if (sessionStorage.getItem("kanban_auth") === "ok") {
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("app").style.display = "block";
-        if (window._firebaseReady) init();
-    }
-};
-
+// ── ARCHIVAGE AUTO ──
 function checkAutoArchive() {
     var d = new Date(); d.setHours(0,0,0,0);
     var changed = false;
@@ -550,9 +616,9 @@ function render() {
         else if (cols[t.status]) { cols[t.status].appendChild(div); counts[t.status]++; }
     });
 
-    document.getElementById("cnt-todo").textContent  = counts.todo;
-    document.getElementById("cnt-doing").textContent = counts.doing;
-    document.getElementById("cnt-done").textContent  = counts.done;
+    document.getElementById("cnt-todo").textContent   = counts.todo;
+    document.getElementById("cnt-doing").textContent  = counts.doing;
+    document.getElementById("cnt-done").textContent   = counts.done;
     document.getElementById("arch-count").textContent = counts.arch ? "("+counts.arch+") " : "";
 }
 window.render = render;
@@ -563,11 +629,11 @@ function fmt(d){ return d ? new Date(d).toLocaleDateString('fr-FR',{day:'2-digit
 // ── TRI ──
 function sortTasks() {
     window._tasks.sort(function(a,b){
-        var la = themeConfig[a.theme]?themeConfig[a.theme].label:a.theme;
-        var lb = themeConfig[b.theme]?themeConfig[b.theme].label:b.theme;
+        var la=themeConfig[a.theme]?themeConfig[a.theme].label:a.theme;
+        var lb=themeConfig[b.theme]?themeConfig[b.theme].label:b.theme;
         if(la<lb) return -1; if(la>lb) return 1;
-        var da = a.end?new Date(a.end):new Date("9999-12-31");
-        var db = b.end?new Date(b.end):new Date("9999-12-31");
+        var da=a.end?new Date(a.end):new Date("9999-12-31");
+        var db=b.end?new Date(b.end):new Date("9999-12-31");
         return da-db;
     });
     saveData(); render(); toast("✅ Tâches triées");
@@ -622,15 +688,15 @@ function saveTask() {
 
 function editTask(id) {
     var t = window._tasks.find(function(x){ return x.id===id; });
-    document.getElementById("taskId").value      = t.id;
-    document.getElementById("titleInput").value  = t.title;
-    document.getElementById("description").value = t.desc||"";
-    document.getElementById("urlInput").value    = t.url||"";
-    document.getElementById("theme").value       = t.theme;
-    document.getElementById("status").value      = t.status;
-    document.getElementById("priority").value    = t.priority||"Normale";
-    document.getElementById("startDate").value   = t.start||"";
-    document.getElementById("endDate").value     = t.end||"";
+    document.getElementById("taskId").value        = t.id;
+    document.getElementById("titleInput").value    = t.title;
+    document.getElementById("description").value   = t.desc||"";
+    document.getElementById("urlInput").value      = t.url||"";
+    document.getElementById("theme").value         = t.theme;
+    document.getElementById("status").value        = t.status;
+    document.getElementById("priority").value      = t.priority||"Normale";
+    document.getElementById("startDate").value     = t.start||"";
+    document.getElementById("endDate").value       = t.end||"";
     document.getElementById("formTitle").textContent = "Modifier la tâche";
     currentTaskActors = (t.actors||[]).slice();
     renderTaskActorChips();
@@ -761,8 +827,7 @@ function importJSON(event){
             toast("✅ Import réussi — "+window._tasks.length+" tâches");
         }catch(err){ alert("❌ "+err.message); }
     };
-    reader.readAsText(file);
-    event.target.value="";
+    reader.readAsText(file); event.target.value="";
 }
 function dl(content,name,type){
     var a=document.createElement("a");

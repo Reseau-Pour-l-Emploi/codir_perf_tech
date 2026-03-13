@@ -440,8 +440,8 @@
             <textarea id="commentText" placeholder="Votre commentaire..." rows="4"></textarea>
         </div>
         <div class="modal-actions">
-            <button class="btn-save"   onclick="saveComment()">✔ Ajouter</button>
-            <button class="btn-cancel" onclick="closeCommentModal()">Annuler</button>
+            <button type="button" class="btn-save"   id="commentSaveBtn">✔ Ajouter</button>
+            <button type="button" class="btn-cancel" id="commentCancelBtn">Annuler</button>
         </div>
     </div>
 </div>
@@ -982,6 +982,11 @@ function toast(msg){
 }
 document.querySelectorAll('.overlay').forEach(function(o){
     o.addEventListener('click',function(e){ if(e.target===o) o.classList.remove('open'); });
+});
+document.getElementById('commentSaveBtn').addEventListener('click', saveComment);
+document.getElementById('commentCancelBtn').addEventListener('click', closeCommentModal);
+document.getElementById('commentText').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) saveComment();
 });
 </script>
 </body>

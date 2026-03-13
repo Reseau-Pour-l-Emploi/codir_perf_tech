@@ -431,7 +431,22 @@
     </div>
 </div>
 
-<div id="toast"></div>
+<!-- ═══ MODALE COMMENTAIRE ═══ -->
+<div id="commentOverlay" class="overlay">
+    <div class="modal" style="max-width:420px;">
+        <h3>💬 Ajouter un commentaire</h3>
+        <input type="hidden" id="commentTaskId">
+        <div class="form-group">
+            <textarea id="commentText" placeholder="Votre commentaire..." rows="4"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-save"   onclick="saveComment()">✔ Ajouter</button>
+            <button class="btn-cancel" onclick="closeCommentModal()">Annuler</button>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- ═══ VARIABLES GLOBALES (avant tout) ═══ -->
 <script>
@@ -781,8 +796,20 @@ function duplicateTask(id) {
     saveData(); render(); toast("📄 Dupliqué");
 }
 function addComment(id) {
-    var m = prompt("Commentaire :");
-    if (m) { window._tasks.find(function(x){ return x.id===id; }).comments.push(m); saveData(); render(); }
+    document.getElementById("commentTaskId").value = id;
+    document.getElementById("commentText").value   = "";
+    document.getElementById("commentOverlay").classList.add("open");
+    setTimeout(function(){ document.getElementById("commentText").focus(); }, 100);
+}
+function saveComment() {
+    var id = document.getElementById("commentTaskId").value;
+    var m  = document.getElementById("commentText").value.trim();
+    if (!m) return;
+    window._tasks.find(function(x){ return x.id===id; }).comments.push(m);
+    saveData(); render(); closeCommentModal(); toast("💬 Commentaire ajouté");
+}
+function closeCommentModal() {
+    document.getElementById("commentOverlay").classList.remove("open");
 }
 function deleteComment(id, idx) {
     window._tasks.find(function(x){ return x.id===id; }).comments.splice(idx,1);

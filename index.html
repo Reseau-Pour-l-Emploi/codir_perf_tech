@@ -135,10 +135,24 @@
         .codir-date-wrap label { font-weight: 700; font-size: 0.8em; color: var(--text); white-space: nowrap; }
         .codir-date-wrap input[type=date] {
             border: 1.5px solid var(--border); border-radius: 8px; padding: 4px 8px;
-            font-size: 0.82em; font-family: inherit; background: white; color: var(--text);
-            width: auto;
+            font-size: 0.82em; font-family: inherit; background: white; color: var(--text); width: auto;
         }
         .codir-date-wrap input[type=date]:focus { outline: none; border-color: #3498db; }
+        .col-sub {
+            display: inline-block; margin-top: 5px;
+            background: rgba(255,255,255,0.32); color: rgba(255,255,255,0.95);
+            font-size: 0.72em; font-weight: 500; letter-spacing: 0.2px;
+            padding: 3px 9px; border-radius: 10px; text-transform: none;
+        }
+        .col-sub .col-count {
+            background: rgba(255,255,255,0.45); color: rgba(0,0,0,0.55);
+            padding: 1px 6px; border-radius: 8px; font-size: 1em; margin-left: 5px;
+        }
+        .btn-misc { background: #16a085; }
+        .btn-misc .misc-date { font-size: 0.72em; opacity: 0.8; font-weight: 400; }
+        #miscTextarea { width: 100%; min-height: 180px; resize: vertical; font-family: inherit;
+            font-size: 0.9em; padding: 10px 12px; border: 1.5px solid var(--border);
+            border-radius: 8px; background: #fffdf2; }
 
         /* ── BUTTONS ── */
         button {
@@ -169,20 +183,7 @@
         #todo  h2 { background: #e74c3c; }
         #doing h2 { background: #e67e22; }
         #done  h2 { background: #27ae60; }
-        .col-sub {
-            display: inline-block; margin-top: 5px;
-            background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.95);
-            font-size: 0.72em; font-weight: 500; letter-spacing: 0.2px;
-            padding: 3px 9px; border-radius: 10px; text-transform: none;
-            pointer-events: none;
-        }
-        .col-sub .col-count {
-            background: rgba(255,255,255,0.38); color: rgba(255,255,255,0.95);
-            padding: 1px 6px; border-radius: 8px; font-size: 1em; margin-left: 5px;
-            pointer-events: none;
-        }
-        .column h2 { pointer-events: none; }
-        .column h2 * { pointer-events: none; }
+        .col-count {
             display: inline-block; background: rgba(255,255,255,0.3);
             padding: 1px 7px; border-radius: 10px; font-size: 0.75em; margin-left: 6px;
         }
@@ -245,11 +246,7 @@
         .btn-save   { background: #27ae60; }
         .btn-cancel { background: #95a5a6; }
 
-        /* ── MISC INFO BUTTON ── */
-        .btn-misc { background: #16a085; position: relative; }
-        .btn-misc .misc-date { font-size: 0.72em; opacity: 0.8; font-weight: 400; }
-        #miscOverlay .modal { max-width: 520px; }
-        #miscTextarea { width: 100%; min-height: 180px; resize: vertical; font-family: inherit; font-size: 0.9em; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; background: #fffdf2; }
+        /* ── TOAST ── */
         #toast {
             position: fixed; bottom: 24px; right: 24px;
             background: #2c3e50; color: white; padding: 12px 20px;
@@ -416,17 +413,18 @@
     </div>
 </div>
 
+
 <!-- ═══ MODALE INFOS DIVERSES ═══ -->
 <div id="miscOverlay" class="overlay">
-    <div class="modal" id="miscOverlay-modal">
+    <div class="modal" style="max-width:520px;">
         <h3>📝 Infos diverses</h3>
         <div class="form-group">
             <label>Notes, jalons, rappels…</label>
-            <textarea id="miscTextarea" placeholder="Saisissez vos infos ici..." rows="8"></textarea>
+            <textarea id="miscTextarea" style="width:100%;min-height:180px;resize:vertical;font-family:inherit;font-size:0.9em;padding:10px 12px;border:1.5px solid #e2e6ea;border-radius:8px;background:#fffdf2;" placeholder="Saisissez vos infos ici..." rows="8"></textarea>
         </div>
         <div class="modal-actions">
-            <button class="btn-save"   onclick="saveMiscInfo()">✔ Enregistrer</button>
-            <button class="btn-cancel" onclick="closeMiscModal()">Fermer</button>
+            <button type="button" class="btn-save"   id="miscSaveBtn">✔ Enregistrer</button>
+            <button type="button" class="btn-cancel" id="miscCancelBtn">Fermer</button>
         </div>
     </div>
 </div>
@@ -437,7 +435,7 @@
         <h3>💬 Ajouter un commentaire</h3>
         <input type="hidden" id="commentTaskId">
         <div class="form-group">
-            <textarea id="commentText" placeholder="Votre commentaire..." rows="4"></textarea>
+            <textarea id="commentText" placeholder="Votre commentaire... (Ctrl+Entrée pour valider)" rows="4" style="width:100%;font-family:inherit;font-size:0.9em;padding:10px 12px;border:1.5px solid #e2e6ea;border-radius:8px;"></textarea>
         </div>
         <div class="modal-actions">
             <button type="button" class="btn-save"   id="commentSaveBtn">✔ Ajouter</button>
@@ -494,26 +492,24 @@
         if (!window._firstSyncDone) {
             clearTimeout(loadingTimeout);
             window._firstSyncDone = true;
-            window._tasks         = data.tasks  || [];
-            window._actors        = data.actors || [];
-            window._miscText      = data.misc || "";
-            window._miscLastDate  = data.miscLastDate || "";
-            window._codirDate     = data.codirDate || "";
-            // Cacher loading, afficher app
+            window._tasks        = data.tasks  || [];
+            window._actors       = data.actors || [];
+            window._miscText     = data.misc   || "";
+            window._miscLastDate = data.miscLastDate || "";
+            window._codirDate    = data.codirDate    || "";
             document.getElementById("loading-screen").style.display = "none";
             document.getElementById("app").style.display = "block";
             if (typeof window.initApp === "function") window.initApp();
         } else {
-            // ── Syncs suivants : mise à jour seulement si pas en édition ──
             if (document.getElementById("taskOverlay").classList.contains("open")) return;
             window._tasks        = data.tasks  || [];
             window._actors       = data.actors || [];
-            window._miscText     = data.misc || "";
+            window._miscText     = data.misc   || "";
             window._miscLastDate = data.miscLastDate || "";
-            window._codirDate    = data.codirDate || "";
+            window._codirDate    = data.codirDate    || "";
             var cd = document.getElementById("codirDate");
             if (cd && document.activeElement !== cd) cd.value = window._codirDate;
-            updateMiscDateLabel();
+            if (typeof window.updateMiscDateLabel === "function") window.updateMiscDateLabel();
             if (typeof window.render === "function") window.render();
         }
 
@@ -542,14 +538,14 @@
 <!-- ═══ LOGIQUE APP ═══ -->
 <script>
 var themeConfig = {
-    "produits_outils":  { label: "Produits / Outils IT",                  color: "#3498db" },
-    "architecture":     { label: "Architecture SI",                         color: "#9b59b6" },
-    "referentiels":     { label: "Référentiels & qualité des données",      color: "#e67e22" },
-    "donnees_ext":      { label: "Données externes",                        color: "#1abc9c" },
-    "gouvernance":      { label: "Gouvernance",                             color: "#e74c3c" },
-    "besoins_metiers":  { label: "Besoins métiers",                         color: "#2980b9" },
-    "deploiement":      { label: "Déploiement, exploitation & support",     color: "#27ae60" },
-    "partenariats":     { label: "Partenariats externes",                   color: "#d35400" }
+    "produits_outils": { label: "Produits / Outils IT",                 color: "#3498db" },
+    "architecture":    { label: "Architecture SI",                        color: "#9b59b6" },
+    "referentiels":    { label: "Référentiels & qualité des données",     color: "#e67e22" },
+    "donnees_ext":     { label: "Données externes",                       color: "#1abc9c" },
+    "gouvernance":     { label: "Gouvernance",                            color: "#e74c3c" },
+    "besoins_metiers": { label: "Besoins métiers",                        color: "#2980b9" },
+    "deploiement":     { label: "Déploiement, exploitation & support",    color: "#27ae60" },
+    "partenariats":    { label: "Partenariats externes",                  color: "#d35400" }
 };
 var prioEmojis       = { "Haute": "🔴", "Normale": "🟡", "Basse": "🔵" };
 var currentTaskActors = [];
@@ -600,10 +596,8 @@ window._bootApp = function() {
 window.initApp = function() {
     checkAutoArchive();
     updateActorsDatalist();
-    // Load CODIR date
     var cd = document.getElementById("codirDate");
     if (cd && window._codirDate) cd.value = window._codirDate;
-    // Load misc date label
     updateMiscDateLabel();
     render();
 };
@@ -625,9 +619,9 @@ function buildPayload() {
     return {
         tasks:        window._tasks,
         actors:       window._actors,
-        misc:         window._miscText || "",
+        misc:         window._miscText     || "",
         miscLastDate: window._miscLastDate || "",
-        codirDate:    document.getElementById("codirDate") ? document.getElementById("codirDate").value : (window._codirDate||"")
+        codirDate:    (document.getElementById("codirDate") ? document.getElementById("codirDate").value : "") || window._codirDate || ""
     };
 }
 function saveData() {
@@ -799,13 +793,16 @@ function addComment(id) {
     document.getElementById("commentTaskId").value = id;
     document.getElementById("commentText").value   = "";
     document.getElementById("commentOverlay").classList.add("open");
-    setTimeout(function(){ document.getElementById("commentText").focus(); }, 100);
+    setTimeout(function(){ document.getElementById("commentText").focus(); }, 150);
 }
 function saveComment() {
-    var id = document.getElementById("commentTaskId").value;
-    var m  = document.getElementById("commentText").value.trim();
+    var id   = document.getElementById("commentTaskId").value;
+    var m    = document.getElementById("commentText").value.trim();
     if (!m) return;
-    window._tasks.find(function(x){ return x.id===id; }).comments.push(m);
+    var task = window._tasks.find(function(x){ return x.id === id; });
+    if (!task) return;
+    if (!task.comments) task.comments = [];
+    task.comments.push(m);
     saveData(); render(); closeCommentModal(); toast("💬 Commentaire ajouté");
 }
 function closeCommentModal() {
@@ -922,7 +919,7 @@ function importJSON(event){
             window._actors       = data.actors || [];
             window._miscText     = data.misc   || "";
             window._miscLastDate = data.miscLastDate || "";
-            window._codirDate    = data.codirDate || "";
+            window._codirDate    = data.codirDate    || "";
             var cd = document.getElementById("codirDate");
             if (cd) cd.value = window._codirDate;
             updateMiscDateLabel();
@@ -940,9 +937,7 @@ function dl(content,name,type){
 function td(){ return new Date().toISOString().split('T')[0]; }
 
 // ── UTILITAIRES ──
-function saveCodirDate() {
-    saveData();
-}
+function saveCodirDate() { saveData(); }
 
 function updateMiscDateLabel() {
     var label = document.getElementById("miscDateLabel");
@@ -954,6 +949,7 @@ function updateMiscDateLabel() {
         label.textContent = "";
     }
 }
+window.updateMiscDateLabel = updateMiscDateLabel;
 
 function openMiscModal() {
     document.getElementById("miscTextarea").value = window._miscText || "";
@@ -983,11 +979,17 @@ function toast(msg){
 document.querySelectorAll('.overlay').forEach(function(o){
     o.addEventListener('click',function(e){ if(e.target===o) o.classList.remove('open'); });
 });
-document.getElementById('commentSaveBtn').addEventListener('click', saveComment);
-document.getElementById('commentCancelBtn').addEventListener('click', closeCommentModal);
+
+// Boutons modale commentaire
+document.getElementById('commentSaveBtn').addEventListener('click', function(){ saveComment(); });
+document.getElementById('commentCancelBtn').addEventListener('click', function(){ closeCommentModal(); });
 document.getElementById('commentText').addEventListener('keydown', function(e){
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) saveComment();
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveComment(); }
 });
+
+// Boutons modale infos diverses
+document.getElementById('miscSaveBtn').addEventListener('click', function(){ saveMiscInfo(); });
+document.getElementById('miscCancelBtn').addEventListener('click', function(){ closeMiscModal(); });
 </script>
 </body>
 </html>

@@ -308,11 +308,11 @@
 
     <div id="kanban">
         <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>À traiter d'ici le prochain CODIR<br><span class="col-sub">informations à partager, rendez-vous, actions en cours <span class="col-count" id="cnt-todo">0</span></span></h2>
+            <h2>Sujets en cours de traitement<br><span class="col-sub">informations à partager, rendez-vous, actions en cours <span class="col-count" id="cnt-todo">0</span></span></h2>
             <div class="task-list"></div>
         </div>
         <div class="column" id="doing" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>Points à inscrire à l'ordre du jour du CODIR<br><span class="col-sub">sujets nécessitant présentation, discussion ou arbitrage <span class="col-count" id="cnt-doing">0</span></span></h2>
+            <h2>Points à inscrire à l'ordre du jour des prochaines COPIL/CODIR<br><span class="col-sub">sujets nécessitant présentation, discussion ou arbitrage <span class="col-count" id="cnt-doing">0</span></span></h2>
             <div class="task-list"></div>
         </div>
         <div class="column" id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -381,8 +381,8 @@
             <div class="form-group">
                 <label>Colonne</label>
                 <select id="status">
-                    <option value="todo">À traiter d'ici le prochain CODIR</option>
-                    <option value="doing">Points à inscrire à l'ordre du jour du CODIR</option>
+                    <option value="todo">Sujets en cours de traitement</option>
+                    <option value="doing">Points à inscrire à l'ordre du jour des prochaines COPIL/CODIR</option>
                     <option value="done">Sujets structurants / de transformation</option>
                 </select>
             </div>
